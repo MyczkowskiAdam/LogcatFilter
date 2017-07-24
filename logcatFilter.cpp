@@ -10,12 +10,11 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-#define VERSION "1.0"
+#define VERSION "1.0 Linux"
 
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <conio.h>
 
 int iPriorty, counter;
 std::string fileName, priority[] = {
@@ -32,12 +31,12 @@ int main() {
 	std::cout << "___________________________________________" << std::endl;
 	std::cout << "__________Welcome to LogcatFilter__________" << std::endl;
 	std::cout << "_________By Adam Myczkowski (mycax)________" << std::endl;
-	std::cout << "________________Version: " << VERSION << "_______________" << std::endl;
+	std::cout << "_____________Version: " << VERSION << "____________" << std::endl;
 	std::cout << "___________________________________________" << std::endl;
 	std::cout << "Enter file path here > " << std::flush;
 	std::cin >> fileName;
 
-	std::ifstream iLog(fileName);
+	std::ifstream iLog (fileName.c_str());
 	if (iLog.is_open()) {
 		std::ofstream oLog("filtered-logcat.txt");
 		while (iPriorty > 8 || iPriorty < 1) {
@@ -101,10 +100,5 @@ int main() {
 		std::cout << "Unable to open the file, it may not exist or be corrupted!" << std::endl;
 	}
 
-	std::cout << "Press any key to exit . . ." << std::endl;
-	while (true) {
-		if (_kbhit()) {
-			return 0;
-		}
-	}
+	return 0;
 }
