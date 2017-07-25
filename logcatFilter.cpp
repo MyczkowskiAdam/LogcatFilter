@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 int iPriority, counter;
 std::string fileName, priority[] = {
@@ -26,6 +27,7 @@ std::string fileName, priority[] = {
 	" F ",
 	" S "
 };
+char const *blacklist = "'";
 
 int main() {
 	std::cout << "___________________________________________" << std::endl;
@@ -35,6 +37,8 @@ int main() {
 	std::cout << "___________________________________________" << std::endl;
 	std::cout << "Enter file path here > " << std::flush;
 	std::cin >> fileName;
+
+	fileName.erase (std::remove(fileName.begin(), fileName.end(), blacklist[0]), fileName.end());
 
 	std::ifstream iLog (fileName.c_str());
 	if (iLog.is_open()) {
