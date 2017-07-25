@@ -16,7 +16,7 @@
 #include <fstream>
 #include <string>
 
-int iPriorty, counter;
+int iPriority, counter;
 std::string fileName, priority[] = {
 	" V ",
 	" D ",
@@ -39,60 +39,66 @@ int main() {
 	std::ifstream iLog (fileName.c_str());
 	if (iLog.is_open()) {
 		std::ofstream oLog("filtered-logcat.txt");
-		while (iPriorty > 8 || iPriorty < 1) {
 
-			std::cout << std::endl;
-			std::cout << "V: Verbose (1)" << std::endl;
-			std::cout << "D : Debug (2)" << std::endl;
-			std::cout << "I : Info (3)" << std::endl;
-			std::cout << "W : Warning (4)" << std::endl;
-			std::cout << "E : Error (5)" << std::endl;
-			std::cout << "F : Fatal (6)" << std::endl;
-			std::cout << "S : Silent (7)" << std::endl;
-			std::cout << "Search for a phrase (8)" << std::endl;
-			std::cout << std::endl;
-			std::cout << "What do you want to filter? > " << std::flush;
-			std::cin >> iPriorty;
+		std::cout << std::endl;
+		std::cout << "V: Verbose (1)" << std::endl;
+		std::cout << "D : Debug (2)" << std::endl;
+		std::cout << "I : Info (3)" << std::endl;
+		std::cout << "W : Warning (4)" << std::endl;
+		std::cout << "E : Error (5)" << std::endl;
+		std::cout << "F : Fatal (6)" << std::endl;
+		std::cout << "S : Silent (7)" << std::endl;
+		std::cout << "Search for a phrase (8)" << std::endl;
+		std::cout << std::endl;
+		std::cout << "What do you want to filter? > " << std::flush;
+		std::cin >> iPriority;
 
-			std::string iLine;
-			if (iPriorty == 8) {
-				std::string strToSearch;
-				std::cout << "Enter a phrase to search > " << std::flush;
-				std::cin >> strToSearch;
-
-				std::cout << std::endl;
-				std::cout << "Searching for: " << strToSearch << std::endl;
-				oLog << "Searching for: " << strToSearch << std::endl;
-				oLog << std::endl;
-
-				while (std::getline(iLog, iLine)) {
-					if (iLine.find(strToSearch) != std::string::npos) {
-						oLog << iLine << std::endl;
-						counter++;
-					}
-				}
-				std::cout << "Found  " << counter << " matching lines." << std::endl;
-				oLog << std::endl;
-				oLog << "Found  " << counter << " matching lines." << std::endl;
-			}
-			else {
-
-				std::cout << std::endl;
-				std::cout << "Filtering: " << priority[iPriorty - 1] << std::endl;
-				oLog << "Filtering for: " << priority[iPriorty - 1] << std::endl;
-				oLog << std::endl;
-
-				while (std::getline(iLog, iLine)) {
-					if (iLine.find(priority[iPriorty - 1]) != std::string::npos) {
-						oLog << iLine << std::endl;
-						counter++;
-					}
-				}
-				std::cout << "Found  " << counter << " matching lines." << std::endl;
-				oLog << std::endl;
-				oLog << "Found  " << counter << " matching lines." << std::endl;
-			}
+		while (iPriority > 8 || iPriority < 1 || std::cin.fail()) {
+			std::cout << "Incorrect input, what do you want to filter? > " << std::flush;
+			std::cin.clear();
+			std::cin.ignore();
+			std::cin >> iPriority;
 		}
+
+		std::string iLine;
+		if (iPriority == 8) {
+			std::string strToSearch;
+			std::cout << "Enter a phrase to search > " << std::flush;
+			std::cin >> strToSearch;
+
+			std::cout << std::endl;
+			std::cout << "Searching for: " << strToSearch << std::endl;
+			oLog << "Searching for: " << strToSearch << std::endl;
+			oLog << std::endl;
+
+			while (std::getline(iLog, iLine)) {
+				if (iLine.find(strToSearch) != std::string::npos) {
+					oLog << iLine << std::endl;
+					counter++;
+				}
+			}
+			std::cout << "Found  " << counter << " matching lines." << std::endl;
+			oLog << std::endl;
+			oLog << "Found  " << counter << " matching lines." << std::endl;
+		}
+		else {
+
+			std::cout << std::endl;
+			std::cout << "Filtering: " << priority[iPriority - 1] << std::endl;
+			oLog << "Filtering for: " << priority[iPriority - 1] << std::endl;
+			oLog << std::endl;
+
+			while (std::getline(iLog, iLine)) {
+				if (iLine.find(priority[iPriority - 1]) != std::string::npos) {
+					oLog << iLine << std::endl;
+					counter++;
+				}
+			}
+			std::cout << "Found  " << counter << " matching lines." << std::endl;
+			oLog << std::endl;
+			oLog << "Found  " << counter << " matching lines." << std::endl;
+		}
+
 		oLog.close();
 		iLog.close();
 	}
@@ -102,3 +108,4 @@ int main() {
 
 	return 0;
 }
+
