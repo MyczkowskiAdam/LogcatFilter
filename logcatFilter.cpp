@@ -21,7 +21,7 @@
 #include <direct.h>
 #define VERSION "1.2 Windows"
 #define GetCWD _getcwd
-char const *blacklist = "'";
+char const *blacklist = "\"";
 #else
 #include <unistd.h>
 #define VERSION "1.2   Linux"
@@ -47,7 +47,7 @@ int main() {
 	std::cout << "_____________Version: " << VERSION << "__________" << std::endl;
 	std::cout << "___________________________________________" << std::endl;
 	std::cout << "Enter file path here > " << std::flush;
-	std::cin >> fileName;
+	std::getline(std::cin, fileName);
 
 	fileName.erase(std::remove(fileName.begin(), fileName.end(), blacklist[0]), fileName.end());
 
@@ -93,7 +93,7 @@ int main() {
 		if (iPriority == 8) {
 			std::string strToSearch;
 			std::cout << "Enter a phrase to search > " << std::flush;
-			std::cin >> strToSearch;
+			std::getline(std::cin, strToSearch);
 
 			std::cout << std::endl;
 			std::cout << "Searching for: " << strToSearch << std::endl;
