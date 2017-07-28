@@ -10,12 +10,19 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-#define VERSION "1.0 Linux"
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <algorithm>
+
+#ifdef _WIN32
+#include <conio.h>
+#define VERSION "1.1 Windows"
+char const *blacklist = "'";
+#else
+#define VERSION "1.1   Linux"
+char const *blacklist = "'";
+#endif
 
 int iPriority, counter;
 std::string fileName, priority[] = {
@@ -27,20 +34,19 @@ std::string fileName, priority[] = {
 	" F ",
 	" S "
 };
-char const *blacklist = "'";
 
 int main() {
 	std::cout << "___________________________________________" << std::endl;
 	std::cout << "__________Welcome to LogcatFilter__________" << std::endl;
 	std::cout << "_________By Adam Myczkowski (mycax)________" << std::endl;
-	std::cout << "_____________Version: " << VERSION << "____________" << std::endl;
+	std::cout << "_____________Version: " << VERSION << "__________" << std::endl;
 	std::cout << "___________________________________________" << std::endl;
 	std::cout << "Enter file path here > " << std::flush;
 	std::cin >> fileName;
 
-	fileName.erase (std::remove(fileName.begin(), fileName.end(), blacklist[0]), fileName.end());
+	fileName.erase(std::remove(fileName.begin(), fileName.end(), blacklist[0]), fileName.end());
 
-	std::ifstream iLog (fileName.c_str());
+	std::ifstream iLog(fileName.c_str());
 	if (iLog.is_open()) {
 		std::ofstream oLog("filtered-logcat.txt");
 
@@ -110,6 +116,15 @@ int main() {
 		std::cout << "Unable to open the file, it may not exist or be corrupted!" << std::endl;
 	}
 
+#ifdef _WIN32
+	std::cout << "Press any key to exit . . ." << std::endl;
+	while (true) {
+		if (_kbhit()) {
+			return EXIT_SUCCESS;
+		}
+	}
+#else
 	return 0;
-}
+#endif
 
+}
