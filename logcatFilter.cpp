@@ -14,18 +14,23 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <errno.h>
 
 #ifdef _WIN32
 #include <conio.h>
-#define VERSION "1.1 Windows"
+#include <direct.h>
+#define VERSION "1.2 Windows"
+#define GetCWD _getcwd
 char const *blacklist = "'";
 #else
-#define VERSION "1.1   Linux"
+#include <unistd.h>
+#define VERSION "1.2   Linux"
+#define GetCWD getcwd
 char const *blacklist = "'";
 #endif
 
 int iPriority, counter;
-std::string fileName, priority[] = {
+std::string fileName, oFileName = "filtered-logcat.txt", prefix = "input-", priority[] = {
 	" V ",
 	" D ",
 	" I ",
@@ -46,9 +51,23 @@ int main() {
 
 	fileName.erase(std::remove(fileName.begin(), fileName.end(), blacklist[0]), fileName.end());
 
+	if (fileName.find(oFileName) != std::string::npos) {
+		char cwd[FILENAME_MAX];
+		if (GetCWD(cwd, sizeof(cwd))) {
+			std::string scwd(cwd);
+			if (fileName.find(oFileName) == 0 || oFileName.find(scwd) != std::string::npos) {
+				std::rename("filtered-logcat.txt", "input-filtered-logcat.txt");
+				fileName.insert(fileName.find(oFileName), prefix);
+			}
+		}
+		else {
+			perror("getcwd() error");
+		}
+	}
+
 	std::ifstream iLog(fileName.c_str());
 	if (iLog.is_open()) {
-		std::ofstream oLog("filtered-logcat.txt");
+		std::ofstream oLog(oFileName.c_str());
 
 		std::cout << std::endl;
 		std::cout << "V: Verbose (1)" << std::endl;
@@ -113,7 +132,8 @@ int main() {
 		iLog.close();
 	}
 	else {
-		std::cout << "Unable to open the file, it may not exist or be corrupted!" << std::endl;
+		fprintf(stderr, "Unable to open '%s': ", const_cast<char*>(fileName.c_str()));
+		perror("");
 	}
 
 #ifdef _WIN32
