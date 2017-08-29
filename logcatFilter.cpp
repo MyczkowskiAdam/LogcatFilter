@@ -19,18 +19,18 @@
 #ifdef _WIN32
 #include <conio.h>
 #include <direct.h>
-#define VERSION "1.2 Windows"
+#define VERSION "1.3 Windows"
 #define GetCWD _getcwd
 char const *blacklist = "\"";
 #else
 #include <unistd.h>
-#define VERSION "1.2   Linux"
+#define VERSION "1.3   Linux"
 #define GetCWD getcwd
 char const *blacklist = "'";
 #endif
 
 int iPriority, counter;
-std::string fileName, oFileName = "filtered-logcat.txt", prefix = "input-", priority[] = {
+std::string fileName, oFileName, onFileName, ioFileName, defaultFileName = "filtered-logcat.txt", prefix = "input-", priority[] = {
 	" V ",
 	" D ",
 	" I ",
@@ -51,12 +51,22 @@ int main() {
 
 	fileName.erase(std::remove(fileName.begin(), fileName.end(), blacklist[0]), fileName.end());
 
+	std::cout << "If you'd like to specificy output file name enter it here otherwise press enter > " << std::flush;
+	std::getline(std::cin, ioFileName);
+	oFileName = defaultFileName;
+	if (ioFileName.length()>0) {
+		oFileName = ioFileName;
+	}
+	oFileName.append(".txt");
 	if (fileName.find(oFileName) != std::string::npos) {
 		char cwd[FILENAME_MAX];
 		if (GetCWD(cwd, sizeof(cwd))) {
 			std::string scwd(cwd);
 			if (fileName.find(oFileName) == 0 || oFileName.find(scwd) != std::string::npos) {
-				std::rename("filtered-logcat.txt", "input-filtered-logcat.txt");
+				const char *c_oFileName = const_cast<char*>(oFileName.c_str());
+				onFileName = fileName.insert(fileName.find(oFileName), prefix);
+				const char *c_onFileName = const_cast<char*>(onFileName.c_str());
+				std::rename(c_oFileName, c_onFileName);
 				fileName.insert(fileName.find(oFileName), prefix);
 			}
 		}
