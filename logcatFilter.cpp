@@ -19,18 +19,18 @@
 #ifdef _WIN32
 #include <conio.h>
 #include <direct.h>
-#define VERSION "1.3 Windows"
+#define VERSION "1.4 Windows"
 #define GetCWD _getcwd
 char const *blacklist = "\"";
 #else
 #include <unistd.h>
-#define VERSION "1.3   Linux"
+#define VERSION "1.4   Linux"
 #define GetCWD getcwd
 char const *blacklist = "'";
 #endif
 
 int iPriority, counter;
-std::string fileName, oFileName, onFileName, ioFileName, defaultFileName = "filtered-logcat.txt", prefix = "input-", priority[] = {
+std::string fileName, oFileName, onFileName, ioFileName, defaultFileName = "filtered-logcat.txt", prefix = "input-", selinuxs = "denied", priority[] = {
 	" V ",
 	" D ",
 	" I ",
@@ -88,11 +88,12 @@ int main() {
 		std::cout << "F : Fatal (6)" << std::endl;
 		std::cout << "S : Silent (7)" << std::endl;
 		std::cout << "Search for a phrase (8)" << std::endl;
+		std::cout << "Selinux denials (9)" << std::endl;
 		std::cout << std::endl;
 		std::cout << "What do you want to filter? > " << std::flush;
 		std::cin >> iPriority;
 
-		while (iPriority > 8 || iPriority < 1 || std::cin.fail()) {
+		while (iPriority > 9 || iPriority < 1 || std::cin.fail()) {
 			std::cout << "Incorrect input, what do you want to filter? > " << std::flush;
 			std::cin.clear();
 			std::cin.ignore();
@@ -112,6 +113,22 @@ int main() {
 
 			while (std::getline(iLog, iLine)) {
 				if (iLine.find(strToSearch) != std::string::npos) {
+					oLog << iLine << std::endl;
+					counter++;
+				}
+			}
+			std::cout << "Found  " << counter << " matching lines." << std::endl;
+			oLog << std::endl;
+			oLog << "Found  " << counter << " matching lines." << std::endl;
+		}
+		else if (iPriority == 9) {
+			std::cout << std::endl;
+			std::cout << "Searching for selinux denials" << std::endl;
+			oLog << "Searching for selinux denials " << std::endl;
+			oLog << std::endl;
+
+			while (std::getline(iLog, iLine)) {
+				if (iLine.find(selinuxs) != std::string::npos) {
 					oLog << iLine << std::endl;
 					counter++;
 				}
